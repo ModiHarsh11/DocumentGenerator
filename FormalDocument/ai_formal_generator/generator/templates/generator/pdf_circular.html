@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        
+        body {
+            font-family: 'Times New Roman', serif;
+            font-size: 12pt;
+            line-height: 1.6;
+            color: #000;
+        }
+        
+        .logo-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .header-line {
+            font-weight: bold;
+            font-size: 13pt;
+            text-align: center;
+            margin: 3px 0;
+        }
+        
+        .circular-title {
+            font-weight: bold;
+            text-decoration: underline;
+            font-size: 16pt;
+            text-align: center;
+            margin: 25px 0 20px;
+        }
+        
+        .date-section {
+            text-align: right;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 11pt;
+        }
+        
+        .subject-section {
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 11pt;
+        }
+        
+        .body-section {
+            text-align: justify;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            font-size: 11pt;
+        }
+        
+        .body-section p {
+            margin-bottom: 10px;
+        }
+        
+        .from-section {
+            text-align: right;
+            font-weight: bold;
+            margin: 40px 0 30px;
+            font-size: 11pt;
+        }
+        
+        .to-table {
+            width: 80%;
+            margin: 30px auto;
+            border-collapse: collapse;
+            font-size: 10pt;
+        }
+        
+        .to-table th, .to-table td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: center;
+        }
+        
+        .to-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        
+        .to-table td {
+            height: 35px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Logo Section -->
+<div class="logo-section">
+    <div style="text-align: center; margin-bottom: 20px;">
+        <img src="file:///D:/python_code/FormalDocument/FormalDocument/ai_formal_generator/static/generator/bisag_logo.png" alt="BISAG Logo" style="height: 75px; width: auto;">
+    </div>
+</div>
+
+<!-- Header Section -->
+<div class="header-line">{{ header.org_name }}</div>
+<div class="header-line">{{ header.ministry }}</div>
+<div class="header-line">{{ header.government }}</div>
+
+<!-- Circular Title -->
+<div class="circular-title">
+    {% if language == "hi" %}परिपत्र{% else %}Circular{% endif %}
+</div>
+
+<!-- Date -->
+<div class="date-section">
+    {% if language == "hi" %}दिनांक :{% else %}Date :{% endif %} {{ date }}
+</div>
+
+<!-- Subject -->
+<div class="subject-section">
+    {% if language == "hi" %}विषय :{% else %}Subject :{% endif %} {{ subject }}
+</div>
+
+<!-- Body -->
+<div class="body-section">
+    {{ body|linebreaks }}
+</div>
+
+<!-- From Section -->
+<div class="from-section">
+    {{ from }}
+</div>
+
+<!-- To Section (Table) -->
+<table class="to-table">
+    <thead>
+        <tr>
+            <th style="width: 15%;">{% if language == "hi" %}क्र.{% else %}Sr. No.{% endif %}</th>
+            <th style="width: 55%;">{% if language == "hi" %}नाम{% else %}Name{% endif %}</th>
+            <th style="width: 30%;">{% if language == "hi" %}हस्ताक्षर{% else %}Sign{% endif %}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in to_people %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>
+                {% if language == "hi" %}
+                    {{ p.name_hi }}
+                {% else %}
+                    {{ p.name_en }}
+                {% endif %}
+            </td>
+            <td></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>

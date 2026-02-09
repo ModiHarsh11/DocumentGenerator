@@ -1,0 +1,190 @@
+{
+  "header": {
+    "english": {
+      "org_name": "Bhaskaracharya National Institute for Space Applications and Geo-informatics",
+      "ministry": "Ministry of Electronics & Information Technology",
+      "government": "Government of India",
+      "title": "Circular for QISMS Documents on FTP and SVN"
+    },
+    "hindi": {
+      "org_name": "भास्कराचार्य राष्ट्रीय अंतरिक्ष अनुप्रयोग एवं भू-सूचना विज्ञान संस्थान",
+      "ministry": "इलेक्ट्रॉनिक्स एवं सूचना प्रौद्योगिकी मंत्रालय",
+      "government": "भारत सरकार",
+      "title": "FTP और SVN पर QISMS दस्तावेज़ों के लिए परिपत्र"
+    }
+  },
+  "footer": {
+    "english": {
+      "designation": "Director – Standardization and Capacity Building",
+      "organization": "BISAG-N"
+    },
+    "hindi": {
+      "designation": "निदेशक – मानकीकरण एवं क्षमता निर्माण",
+      "organization": "BISAG-N"
+    }
+  },
+
+ "people": [
+  {
+    "id": 1,
+    "name_en": "Shri T. P. Singh",
+    "name_hi": "श्री टी. पी. सिंह",
+    "designation_en": "Director General",
+    "designation_hi": "महानिदेशक"
+  },
+  {
+    "id": 2,
+    "name_en": "Shri Vinay Thakur",
+    "name_hi": "श्री विनय ठाकुर",
+    "designation_en": "Special Director General",
+    "designation_hi": "विशेष महानिदेशक"
+  },
+  {
+    "id": 3,
+    "name_en": "Ms. Tulika Pandey",
+    "name_hi": "सुश्री तुलिका पांडेय",
+    "designation_en": "Chief Vigilance Officer",
+    "designation_hi": "मुख्य सतर्कता अधिकारी"
+  },
+  {
+    "id": 4,
+    "name_en": "Mr. Ajay Patel",
+    "name_hi": "श्री अजय पटेल",
+    "designation_en": "Director – Geo Spatial Applications",
+    "designation_hi": "निदेशक – भू-स्थानिक अनुप्रयोग"
+  },
+  {
+    "id": 5,
+    "name_en": "Mr. Vijay Singh",
+    "name_hi": "श्री विजय सिंह",
+    "designation_en": "Additional Director",
+    "designation_hi": "अतिरिक्त निदेशक"
+  },
+  {
+    "id": 6,
+    "name_en": "Mr. Khalid Mehmood",
+    "name_hi": "श्री खालिद मेहमूद",
+    "designation_en": "Additional Director",
+    "designation_hi": "अतिरिक्त निदेशक"
+  },
+  {
+    "id": 7,
+    "name_en": "Mr. Miren Karamata",
+    "name_hi": "श्री मिरेन करमाटा",
+    "designation_en": "Director – Defence Applications",
+    "designation_hi": "निदेशक – रक्षा अनुप्रयोग"
+  },
+  {
+    "id": 8,
+    "name_en": "Dr. Krunal Patel",
+    "name_hi": "डॉ. क्रुणाल पटेल",
+    "designation_en": "Additional Director",
+    "designation_hi": "अतिरिक्त निदेशक"
+  },
+  {
+    "id": 9,
+    "name_en": "Dr. Manoj Pandya",
+    "name_hi": "डॉ. मनोज पांड्या",
+    "designation_en": "Additional Director",
+    "designation_hi": "अतिरिक्त निदेशक"
+  },
+  {
+    "id": 10,
+    "name_en": "Dr. Abdul Jhummarwala",
+    "name_hi": "डॉ. अब्दुल झुम्मरवाला",
+    "designation_en": "Additional Director",
+    "designation_hi": "अतिरिक्त निदेशक"
+  },
+  {
+    "id": 11,
+    "name_en": "Mr. Punit Lalwani",
+    "name_hi": "श्री पुनीत लालवानी",
+    "designation_en": "Additional Director cum CISO",
+    "designation_hi": "अतिरिक्त निदेशक सह मुख्य सूचना सुरक्षा अधिकारी"
+  },
+  {
+    "id": 12,
+    "name_en": "Mr. Rajesh Patel",
+    "name_hi": "श्री राजेश पटेल",
+    "designation_en": "Director – SATCOM Applications",
+    "designation_hi": "निदेशक – सैटकॉम अनुप्रयोग"
+  },
+  {
+    "id": 13,
+    "name_en": "Mr. Sanjay Vaghasiya",
+    "name_hi": "श्री संजय वाघसिया",
+    "designation_en": "Additional Director",
+    "designation_hi": "अतिरिक्त निदेशक"
+  },
+  {
+    "id": 14,
+    "name_en": "Mr. Riken Darji",
+    "name_hi": "श्री रिकेन दर्जी",
+    "designation_en": "Additional Director",
+    "designation_hi": "अतिरिक्त निदेशक"
+  },
+  {
+    "id": 15,
+    "name_en": "Ms. Neelu Chaudhary",
+    "name_hi": "सुश्री नीलू चौधरी",
+    "designation_en": "Senior Manager",
+    "designation_hi": "वरिष्ठ प्रबंधक"
+  },
+  {
+    "id": 16,
+    "name_en": "Mr. Akshat Jain",
+    "name_hi": "श्री अक्षत जैन",
+    "designation_en": "Manager – IT",
+    "designation_hi": "प्रबंधक – आईटी"
+  },
+  {
+    "id": 17,
+    "name_en": "Ms. Gunjan Kanwar",
+    "name_hi": "सुश्री गुंजन कंवर",
+    "designation_en": "Manager – IT",
+    "designation_hi": "प्रबंधक – आईटी"
+  },
+  {
+    "id": 18,
+    "name_en": "Mr. Siddharth Dhawan",
+    "name_hi": "श्री सिद्धार्थ धवन",
+    "designation_en": "Manager – Legal & Administration",
+    "designation_hi": "प्रबंधक – विधिक एवं प्रशासन"
+  },
+  {
+    "id": 19,
+    "name_en": "Mr. Harender Singh",
+    "name_hi": "श्री हरेंद्र सिंह",
+    "designation_en": "Project Manager",
+    "designation_hi": "परियोजना प्रबंधक"
+  },
+  {
+    "id": 20,
+    "name_en": "Mr. Gaurav Awasthi",
+    "name_hi": "श्री गौरव अवस्थी",
+    "designation_en": "Project Manager",
+    "designation_hi": "परियोजना प्रबंधक"
+  },
+  {
+    "id": 21,
+    "name_en": "Mr. S. K. Hudda",
+    "name_hi": "श्री एस. के. हुड्डा",
+    "designation_en": "Director – Administration",
+    "designation_hi": "निदेशक – प्रशासन"
+  },
+  {
+    "id": 22,
+    "name_en": "Mr. Kiritsinh Raol",
+    "name_hi": "श्री किरीतसिंह रावल",
+    "designation_en": "Purchase Officer",
+    "designation_hi": "क्रय अधिकारी"
+  },
+  {
+    "id": 23,
+    "name_en": "Dr. Sanjay Rajpal",
+    "name_hi": "डॉ. संजय राजपाल",
+    "designation_en": "Director - Standardisation",
+    "designation_hi": "निदेशक - मानकीकरण"
+  }
+]
+}

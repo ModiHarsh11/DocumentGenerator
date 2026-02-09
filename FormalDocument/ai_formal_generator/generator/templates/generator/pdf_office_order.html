@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<!-- Header Lines -->
+{% for line in header %}
+    <div class="center bold">{{ line }}</div>
+{% endfor %}
+
+<!-- Reference and Date in two columns -->
+<div class="ref-date-row">
+    <div class="ref-left bold">
+        {% if language == "hi" %}सं : {{ reference }}{% else %}Ref: {{ reference }}{% endif %}
+    </div>
+    <div class="date-right bold">
+        {% if language == "hi" %}दिनांक : {{ date }}{% else %}Date: {{ date }}{% endif %}
+    </div>
+</div>
+
+<!-- Title -->
+<div class="title">{{ title }}</div>
+
+<!-- Body -->
+<div class="body">
+    {{ body }}
+</div>
+
+<!-- From (right aligned) -->
+<div class="from-section">
+    {{ from }}
+</div>
+
+<!-- To Section (left aligned) -->
+<div class="to-section">
+    <div class="bold">
+        {% if language == "hi" %}प्रति :{% else %}To:{% endif %}
+    </div>
+    {% for t in to %}
+        <div class="bold">{{ t }}</div>
+    {% endfor %}
+</div>
+
+</body>
+</html>

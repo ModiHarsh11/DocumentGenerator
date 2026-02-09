@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Circular Preview - BISAG-N</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f5f5f5; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .circular-preview {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 50px 60px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            font-family: 'Times New Roman', serif;
+        }
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header-line {
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .circular-title {
+            font-weight: bold;
+            text-decoration: underline;
+            font-size: 18px;
+            margin: 25px 0 20px;
+            text-align: center;
+        }
+        .date-section {
+            text-align: right;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .subject-section {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .body-section {
+            text-align: justify;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+        .from-section {
+            text-align: right;
+            font-weight: bold;
+            margin: 40px 0 30px;
+        }
+        .to-table {
+            width: 80%;
+            margin: 30px auto;
+            border-collapse: collapse;
+        }
+        .to-table th, .to-table td {
+            border: 1px solid #333;
+            padding: 10px;
+            text-align: center;
+        }
+        .to-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .action-buttons {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px dashed #dee2e6;
+        }
+        .btn {
+            margin: 0 5px;
+            border-radius: 4px;
+        }
+        .btn-danger {
+            background: #dc3545;
+            border: none;
+        }
+        .btn-success {
+            background: #28a745;
+            border: none;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            border: none;
+        }
+        @media print {
+            .action-buttons { display: none; }
+            body { background: white; }
+            .circular-preview { box-shadow: none; padding: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="circular-preview">
+    
+    <!-- BISAG Logo -->
+    <div class="header-section">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="{% static 'generator/bisag_logo.png' %}" alt="BISAG Logo" style="height: 90px; width: auto;">
+        </div>
+        
+        <!-- Header Lines -->
+        <div class="header-line">{{ header.org_name }}</div>
+        <div class="header-line">{{ header.ministry }}</div>
+        <div class="header-line">{{ header.government }}</div>
+    </div>
+    
+    <!-- Circular Title -->
+    <div class="circular-title">
+        {% if language == "hi" %}परिपत्र{% else %}Circular{% endif %}
+    </div>
+    
+    <!-- Date -->
+    <div class="date-section">
+        {% if language == "hi" %}दिनांक :{% else %}Date :{% endif %} {{ date }}
+    </div>
+    
+    <!-- Subject -->
+    <div class="subject-section">
+        {% if language == "hi" %}विषय :{% else %}Subject :{% endif %} {{ subject }}
+    </div>
+    
+    <!-- Body -->
+    <div class="body-section">
+        {{ body|linebreaks }}
+    </div>
+    
+    <!-- From Section -->
+    <div class="from-section">
+        {{ from }}
+    </div>
+    
+    <!-- To Section (Table) -->
+    <table class="to-table">
+        <thead>
+            <tr>
+                <th>{% if language == "hi" %}क्र.{% else %}Sr. No.{% endif %}</th>
+                <th>{% if language == "hi" %}नाम{% else %}Name{% endif %}</th>
+                <th>{% if language == "hi" %}हस्ताक्षर{% else %}Sign{% endif %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in to_people %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>
+                    {% if language == "hi" %}
+                        {{ p.name_hi }}
+                    {% else %}
+                        {{ p.name_en }}
+                    {% endif %}
+                </td>
+                <td style="height: 40px;"></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+</div>
+
+<!-- Action Buttons -->
+<div class="action-buttons">
+    <a href="{% url 'download_circular_pdf' %}" class="btn btn-danger btn-lg">
+        📄 Download PDF
+    </a>
+    <a href="{% url 'download_circular_docx' %}" class="btn btn-success btn-lg">
+        📝 Download DOCX
+    </a>
+    <a href="{% url 'home' %}" class="btn btn-secondary btn-lg">
+        ← Back to Home
+    </a>
+</div>
+
+</body>
+</html>

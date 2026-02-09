@@ -1,0 +1,453 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BISAG-N Document Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .main-container {
+            max-width: 900px;
+            margin: 30px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .header-section {
+            text-align: center;
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .header-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            border: 2px solid #2c3e50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #2c3e50;
+            color: white;
+            font-size: 32px;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .doc-selector {
+            margin-bottom: 30px;
+        }
+        .doc-type-btn {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+        .doc-type-btn:hover {
+            border-color: #2c3e50;
+            background: #f8f9fa;
+        }
+        .doc-type-btn.active {
+            border-color: #2c3e50;
+            background: #2c3e50;
+            color: white;
+        }
+        .doc-type-btn .icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .doc-type-btn .title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .form-section {
+            display: none;
+        }
+        .form-section.active {
+            display: block;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+        .form-control, .form-select {
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            padding: 10px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #2c3e50;
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.15);
+        }
+        .collapsible-section {
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        .collapsible-header {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #2c3e50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+        .collapsible-header:hover {
+            background: #e9ecef;
+        }
+        .collapsible-header .arrow {
+            transition: transform 0.3s;
+        }
+        .collapsible-header.expanded .arrow {
+            transform: rotate(90deg);
+        }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .collapsible-content.expanded {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            background: #fafafa;
+        }
+        .to-section {
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+        .btn-generate {
+            background: #5a6c7d;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .btn-generate:hover {
+            background: #4a5c6d;
+            color: white;
+        }
+        .btn-primary {
+            background: #2c3e50;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background: #1a252f;
+        }
+    </style>
+</head>
+<body>
+
+<!-- <img src="{% static 'generator/bisag_img1.jpg' %}" alt="BISAG-Bg Img"> -->
+<div class="main-container">
+    <!-- Header -->
+    
+    <div class="header-section">
+        <img src="{% static 'generator/bisag_logo.png' %}" alt="BISAG-N Logo" style="width: 100px; height: 100px; margin: 0 auto 15px; display: block;">
+        <h1>BISAG-N Document Generator</h1>
+        <div class="subtitle">Bhaskaracharya National Institute for Space Applications and Geo-informatics</div>
+    </div>
+
+    <!-- Document Type Selector -->
+    <div class="doc-selector">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="doc-type-btn" onclick="selectDocType('office')">
+                    <div class="icon">📄</div>
+                    <div class="title">Office Order</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="doc-type-btn" onclick="selectDocType('circular')">
+                    <div class="icon">📢</div>
+                    <div class="title">Circular</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Office Order Form -->
+    <div id="officeForm" class="form-section">
+        <h5 class="mb-3" style="color: #2c3e50; border-bottom: 1px solid #e0e0e0; padding-bottom: 10px;">Office Order Form</h5>
+        <form method="POST" action="{% url 'result' %}">
+            {% csrf_token %}
+            
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Language / भाषा</label>
+                    <select name="language" id="office_language" class="form-select" onchange="updateOfficeRef()" required>
+                        <option value="">-- Select Language --</option>
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी (Hindi)</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Date / दिनांक</label>
+                    <input type="date" name="date" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Reference / संदर्भ</label>
+                    <input type="text" name="reference" id="office_reference" class="form-control" value="BISAG-N/Office Order/2026/" required>
+                </div>
+            </div>
+
+            <!-- From Section - Collapsible -->
+            <div class="collapsible-section mb-3">
+                <div class="collapsible-header" onclick="toggleCollapse('office_from_content')">
+                    <span>From (Position) / से (पद)</span>
+                    <span class="arrow">▶</span>
+                </div>
+                <div id="office_from_content" class="collapsible-content">
+                    <select name="from_position" class="form-select" required>
+                        <option value="">-- Select Position --</option>
+                        {% for designation in designations %}
+                        <option value="{{ designation }}">{{ designation }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- To Section - Collapsible -->
+            <div class="collapsible-section mb-3">
+                <div class="collapsible-header" onclick="toggleCollapse('office_to_content')">
+                    <span>To (Recipients) / प्रति (प्राप्तकर्ता)</span>
+                    <span class="arrow">▶</span>
+                </div>
+                <div id="office_to_content" class="collapsible-content">
+                    {% for designation in designations %}
+                    <div class="form-check mb-2">
+                        <input type="checkbox" name="to_recipients[]" value="{{ designation }}" class="form-check-input">
+                        <label class="form-check-label">{{ designation }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Body Prompt / सामग्री संकेत</label>
+                <textarea name="body_prompt" id="office_body_prompt" class="form-control" rows="3" 
+                          placeholder="Enter instructions for AI to generate office order body..."></textarea>
+                <button type="button" class="btn btn-generate mt-2" onclick="generateOfficeBody()">
+                    🤖 Generate Body with AI
+                </button>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Office Order Body / कार्यालय आदेश सामग्री</label>
+                <textarea name="body" id="office_body" class="form-control" rows="6" 
+                          placeholder="AI generated body will appear here or type manually..." required></textarea>
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary">
+                    Preview Office Order →
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Circular Form -->
+    <div id="circularForm" class="form-section">
+        <h5 class="mb-3" style="color: #2c3e50; border-bottom: 1px solid #e0e0e0; padding-bottom: 10px;">Circular Form</h5>
+        <form method="POST" action="{% url 'result_circular' %}">
+            {% csrf_token %}
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Language / भाषा</label>
+                    <select name="language" id="circular_language" class="form-select" required>
+                        <option value="">-- Select Language --</option>
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी (Hindi)</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Date / दिनांक</label>
+                    <input type="date" name="date" class="form-control" required>
+                </div>
+            </div>
+
+            <!-- From Section - Collapsible -->
+            <div class="collapsible-section mb-3">
+                <div class="collapsible-header" onclick="toggleCollapse('circular_from_content')">
+                    <span>From (Position) / से (पद)</span>
+                    <span class="arrow">▶</span>
+                </div>
+                <div id="circular_from_content" class="collapsible-content">
+                    <select name="from_position" class="form-select" required>
+                        <option value="">-- Select Position --</option>
+                        {% for designation in designations %}
+                        <option value="{{ designation }}">{{ designation }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- To Section - Collapsible -->
+            <div class="collapsible-section mb-3">
+                <div class="collapsible-header" onclick="toggleCollapse('circular_to_content')">
+                    <span>To (Recipients) / प्रति (प्राप्तकर्ता)</span>
+                    <span class="arrow">▶</span>
+                </div>
+                <div id="circular_to_content" class="collapsible-content">
+                    {% for p in people %}
+                    <div class="form-check mb-2">
+                        <input type="checkbox" name="to[]" value="{{ p.id }}" class="form-check-input">
+                        <label class="form-check-label">
+                            <strong>{{ p.name_en }}</strong> ({{ p.designation_en }})
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Subject / विषय</label>
+                <input type="text" name="subject" class="form-control" placeholder="Enter subject of circular" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Body Prompt / सामग्री संकेत</label>
+                <textarea name="body_prompt" id="circular_body_prompt" class="form-control" rows="3" 
+                          placeholder="Enter instructions for AI to generate circular body..."></textarea>
+                <button type="button" class="btn btn-generate mt-2" onclick="generateCircularBody()">
+                    🤖 Generate Body with AI
+                </button>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Circular Body / परिपत्र सामग्री</label>
+                <textarea name="body" id="circular_body" class="form-control" rows="6" 
+                          placeholder="AI generated body will appear here or type manually..." required></textarea>
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary">
+                    Preview Circular →
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+function updateOfficeRef() {
+    const lang = document.getElementById('office_language').value;
+    const refField = document.getElementById('office_reference');
+    if (lang === 'hi') {
+        refField.value = 'बायसेग-एन/कार्यालय आदेश/2026/';
+    } else {
+        refField.value = 'BISAG-N/Office Order/2026/';
+    }
+}
+
+function toggleCollapse(contentId) {
+    const content = document.getElementById(contentId);
+    const header = event.currentTarget;
+    
+    // Toggle expanded class
+    header.classList.toggle('expanded');
+    content.classList.toggle('expanded');
+}
+
+function selectDocType(type) {
+    // Update button styles
+    document.querySelectorAll('.doc-type-btn').forEach(btn => btn.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    
+    // Show/hide forms
+    document.querySelectorAll('.form-section').forEach(form => form.classList.remove('active'));
+    if (type === 'office') {
+        document.getElementById('officeForm').classList.add('active');
+    } else {
+        document.getElementById('circularForm').classList.add('active');
+    }
+}
+
+function generateOfficeBody() {
+    const prompt = document.getElementById('office_body_prompt').value;
+    const lang = document.getElementById('office_language').value;
+    
+    if (!prompt || !lang) {
+        alert('Please select language and enter prompt first!');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('body_prompt', prompt);
+    formData.append('language', lang);
+    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+    
+    fetch('{% url "generate_body" %}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.text())
+    .then(text => {
+        document.getElementById('office_body').value = text;
+    })
+    .catch(err => {
+        alert('Error generating body: ' + err);
+    });
+}
+
+function generateCircularBody() {
+    const prompt = document.getElementById('circular_body_prompt').value;
+    const lang = document.getElementById('circular_language').value;
+    
+    if (!prompt || !lang) {
+        alert('Please select language and enter prompt first!');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('body_prompt', prompt);
+    formData.append('language', lang);
+    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+    
+    fetch('{% url "generate_circular_body" %}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.text())
+    .then(text => {
+        document.getElementById('circular_body').value = text;
+    })
+    .catch(err => {
+        alert('Error generating body: ' + err);
+    });
+}
+</script>
+
+</body>
+</html>

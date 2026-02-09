@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Circular Generator - BISAG-N</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .form-container { 
+            max-width: 900px; 
+            margin: 30px auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.1); 
+        }
+        .header-title { 
+            color: #0056b3; 
+            border-bottom: 3px solid #0056b3; 
+            padding-bottom: 10px; 
+            margin-bottom: 30px; 
+        }
+        .to-section { 
+            max-height: 300px; 
+            overflow-y: auto; 
+            border: 1px solid #dee2e6; 
+            padding: 15px; 
+            border-radius: 5px; 
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+
+<h3 class="text-center header-title">📄 BISAG-N Circular Generator</h3>
+
+<form method="POST" id="circularForm">
+{% csrf_token %}
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <label class="form-label fw-bold">Language / भाषा</label>
+        <select name="language" id="language" class="form-select" required>
+            <option value="">-- Select Language --</option>
+            <option value="en">English</option>
+            <option value="hi">हिंदी (Hindi)</option>
+        </select>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label fw-bold">Date / दिनांक</label>
+        <input type="date" name="date" class="form-control" required>
+    </div>
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-bold">Subject / विषय</label>
+    <input type="text" name="subject" class="form-control" placeholder="Enter subject of circular" required>
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-bold">Body Prompt / सामग्री संकेत</label>
+    <textarea name="body_prompt" id="body_prompt" class="form-control" rows="3" 
+              placeholder="Enter instructions or topic for AI to generate circular body..." required></textarea>
+    <button type="button" class="btn btn-sm btn-info mt-2" onclick="generateBody()">
+        🤖 Generate Body with AI
+    </button>
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-bold">Circular Body / परिपत्र सामग्री</label>
+    <textarea name="body" id="body" class="form-control" rows="6" 
+              placeholder="AI generated body will appear here or type manually..." required></textarea>
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-bold">From (Designation) / से (पदनाम)</label>
+    <input type="text" name="from" class="form-control" 
+           placeholder="e.g., Director, Manager, etc." required>
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-bold">To (Select Recipients) / प्रति (प्राप्तकर्ता चुनें)</label>
+    <div class="to-section">
+        <div class="form-check mb-2">
+            <input type="checkbox" id="selectAll" class="form-check-input" onclick="toggleAll()">
+            <label class="form-check-label fw-bold" for="selectAll">
+                Select All / सभी चुनें
+            </label>
+        </div>
+        <hr>
+        {% for p in people %}
+        <div class="form-check mb-2">
+            <input type="checkbox" name="to[]" value="{{ p.id }}" class="form-check-input recipient-check">
+            <label class="form-check-label">
+                <strong>{{ p.name_en }}</strong> ({{ p.designation_en }})
+                <br>
+                <small class="text-muted">{{ p.name_hi }} ({{ p.designation_hi }})</small>
+            </label>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <button type="submit" class="btn btn-primary btn-lg px-5">
+        👁️ Preview Circular
+    </button>
+</div>
+
+</form>
+</div>
+
+<script>
+function toggleAll() {
+    const selectAll = document.getElementById('selectAll');
+    const checkboxes = document.querySelectorAll('.recipient-check');
+    checkboxes.forEach(cb => cb.checked = selectAll.checked);
+}
+
+function generateBody() {
+    const prompt = document.getElementById('body_prompt').value;
+    const lang = document.getElementById('language').value;
+    
+    if (!prompt || !lang) {
+        alert('Please select language and enter prompt first!');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('body_prompt', prompt);
+    formData.append('language', lang);
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    
+    fetch("{% url 'generate_circular_body' %}", {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.text())
+    .then(text => {
+        document.getElementById('body').value = text;
+    })
+    .catch(err => {
+        alert('Error generating body: ' + err);
+    });
+}
+</script>
+
+</body>
+</html>

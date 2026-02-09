@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Office Order Preview - BISAG-N</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f5f5f5; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .order-preview {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 50px 60px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            font-family: 'Times New Roman', serif;
+        }
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header-line {
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .ref-date-section {
+            margin: 20px 0;
+        }
+        .ref-line {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .date-line {
+            font-weight: bold;
+            text-align: right;
+        }
+        .title-section {
+            font-weight: bold;
+            text-decoration: underline;
+            font-size: 18px;
+            margin: 25px 0 20px;
+            text-align: center;
+        }
+        .body-section {
+            text-align: justify;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+        .from-section {
+            text-align: right;
+            font-weight: bold;
+            margin: 40px 0 20px;
+        }
+        .to-section {
+            margin-top: 20px;
+        }
+        .to-section .label {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .to-section div {
+            font-weight: bold;
+        }
+        .action-buttons {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px dashed #dee2e6;
+        }
+        .btn {
+            margin: 0 5px;
+            border-radius: 4px;
+        }
+        .btn-danger {
+            background: #dc3545;
+            border: none;
+        }
+        .btn-success {
+            background: #28a745;
+            border: none;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            border: none;
+        }
+        @media print {
+            .action-buttons { display: none; }
+            body { background: white; }
+            .order-preview { box-shadow: none; padding: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="order-preview">
+    
+    <!-- Header Lines (Logo removed as per BISAG format) -->
+    <div class="header-section">
+        {% for line in header %}
+        <div class="header-line">{{ line }}</div>
+        {% endfor %}
+    </div>
+    
+    <!-- Reference and Date -->
+    <div class="ref-date-section">
+        <div class="ref-line">{% if language == "hi" %}सं :{% else %}Ref:{% endif %} {{ reference }}</div>
+        <div class="date-line">{% if language == "hi" %}दिनांक :{% else %}Date:{% endif %} {{ date }}</div>
+    </div>
+    
+    <!-- Title -->
+    <div class="title-section">
+        {{ title }}
+    </div>
+    
+    <!-- Body -->
+    <div class="body-section">
+        {{ body|linebreaks }}
+    </div>
+    
+    <!-- From Section -->
+    <div class="from-section">
+        {{ from }}
+    </div>
+    
+    <!-- To Section -->
+    <div class="to-section">
+        <div class="label">{% if language == "hi" %}प्रति :{% else %}To:{% endif %}</div>
+        {% for t in to %}
+        <div>{{ t }}</div>
+        {% endfor %}
+    </div>
+    
+</div>
+
+<!-- Action Buttons -->
+<div class="action-buttons">
+    <a href="{% url 'download_pdf' %}" class="btn btn-danger btn-lg">
+        📄 Download PDF
+    </a>
+    <a href="{% url 'download_docx' %}" class="btn btn-success btn-lg">
+        📝 Download DOCX
+    </a>
+    <a href="{% url 'home' %}" class="btn btn-secondary btn-lg">
+        ← Back to Home
+    </a>
+</div>
+
+</body>
+</html>

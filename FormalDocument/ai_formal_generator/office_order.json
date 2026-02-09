@@ -1,0 +1,22 @@
+{
+  "document_type": "Office Order",
+  "title_en": "OFFICE ORDER",
+  "title_hi": "कार्यालय आदेश",
+
+  "header": {
+    "en": [
+      "Bhaskaracharya Institute for Space Applications & Geo-Informatics (BISAG-N)",
+      "Ministry of Electronics and Information Technology (MeitY)",
+      "Government of India"
+    ],
+    "hi": [
+      "भास्करचार्य अंतरिक्ष अनुप्रयोग एवं भू-सूचना विज्ञान संस्थान",
+      "इलेक्ट्रॉनिक्स एवं सूचना प्रौद्योगिकी मंत्रालय",
+      "भारत सरकार"
+    ]
+  },
+
+  "show_ref_date": true,
+  "show_from": true,
+  "show_to": true
+}

@@ -1,0 +1,6 @@
+django
+google-generativeai
+python-dotenv
+reportlab
+python-docx
+reportlab

@@ -132,7 +132,3 @@ STATICFILES_DIRS = [
 # DEFAULT PRIMARY KEY
 # --------------------------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# GEMINI_API_KEY="AIzaSyAd0oH3bwqFAFFZJM6ZlsYaA1nVIg-gPLk"
-#VEDANT_API
-GEMINI_API_KEY="AIzaSyA8PRztLXtS9C0RV9sRzSctFSWC6KUSn3A"

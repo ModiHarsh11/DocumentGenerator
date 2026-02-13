@@ -49,6 +49,10 @@ DESIGNATION_MAP = {
         "hi": "परियोजना प्रबंधक",
         "en": "Project Manager",
     },
+    "Assistant Project Manager": {
+        "hi": "सहायक परियोजना प्रबंधक",
+        "en": "Assistant Project Manager",
+    },
     "Director -Administration": {
         "hi": "निदेशक - प्रशासन",
         "en": "Director -Administration",
@@ -65,7 +69,7 @@ DESIGNATION_MAP = {
         "hi": "प्रशिक्षार्थियों",
         "en": "Interns",
     },
-    "All Employee": {
+    "All Employees": {
         "hi": "सभी कर्मचारी",
         "en": "All Employees",
     },

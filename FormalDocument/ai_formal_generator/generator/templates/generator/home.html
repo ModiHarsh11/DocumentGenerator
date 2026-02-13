@@ -193,7 +193,7 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="doc-type-btn" onclick="selectDocType('circular')">
+                <div class="doc-type-btn" onclick="selectDocType('policy')">
                     <div class="icon">📜</div>
                     <div class="title">Policy</div>
                 </div>
@@ -370,6 +370,100 @@
         </form>
     </div>
 
+    <!-- Policy Form -->
+    <div id="policyForm" class="form-section">
+        <h5 class="mb-3" style="color: #2c3e50; border-bottom: 1px solid #e0e0e0; padding-bottom: 10px;">Policy Form</h5>
+        <form method="POST" action="{% url 'result_policy' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Language / भाषा</label>
+                    <select name="language" id="policy_language" class="form-select" required>
+                        <option value="">-- Select Language --</option>
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी (Hindi)</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Date / दिनांक</label>
+                    <input type="date" name="date" class="form-control" required>
+                </div>
+            </div>
+
+            <!-- From Section - Collapsible -->
+            <div class="collapsible-section mb-3">
+                <div class="collapsible-header" onclick="toggleCollapse('policy_from_content')">
+                    <span>From (Position) / से (पद)</span>
+                    <span class="arrow">▶</span>
+                </div>
+                <div id="policy_from_content" class="collapsible-content">
+                    <select name="from_position" class="form-select" required>
+                        <option value="">-- Select Position --</option>
+                        {% for designation in designations %}
+                        <option value="{{ designation }}">{{ designation }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- To Section - Collapsible -->
+            <div class="collapsible-section mb-3">
+                <div class="collapsible-header" onclick="toggleCollapse('policy_to_content')">
+                    <span>To (Recipients) / प्रति (प्राप्तकर्ता)</span>
+                    <span class="arrow">▶</span>
+                </div>
+                <div id="policy_to_content" class="collapsible-content">
+                    {% for designation in designations %}
+                    <div class="form-check mb-2">
+                        <input type="checkbox" name="to_recipients[]" value="{{ designation }}" class="form-check-input">
+                        <label class="form-check-label">{{ designation }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Subject / विषय</label>
+                <input type="text" name="subject" class="form-control" placeholder="Enter subject of policy" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Body Prompt / सामग्री संकेत</label>
+                <textarea name="body_prompt" id="policy_body_prompt" class="form-control" rows="3" 
+                          placeholder="Enter instructions for AI to generate policy body..."></textarea>
+                <button type="button" class="btn btn-generate mt-2" onclick="generatePolicyBody()">
+                    🤖 Generate Body with AI
+                </button>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Policy Body / नीति सामग्री</label>
+                <textarea name="body" id="policy_body" class="form-control" rows="6" 
+                          placeholder="AI generated body will appear here or type manually..." required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Attached PDF Name / संलग्न पीडीएफ नाम</label>
+                <input type="text" name="attached_pdf_name" class="form-control" 
+                       placeholder="e.g., BISAG-N GeoAI Policy" required>
+                <small class="text-muted">This name will be displayed as "Attached: {name}" on the first page</small>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Upload PDF (for second page) / पीडीएफ अपलोड करें</label>
+                <input type="file" name="policy_pdf" class="form-control" accept="application/pdf">
+                <small class="text-muted">Upload a PDF file that will be attached as the second page</small>
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary">
+                    Preview Policy →
+                </button>
+            </div>
+        </form>
+    </div>
+
 </div>
 
 <script>
@@ -401,8 +495,10 @@ function selectDocType(type) {
     document.querySelectorAll('.form-section').forEach(form => form.classList.remove('active'));
     if (type === 'office') {
         document.getElementById('officeForm').classList.add('active');
-    } else {
+    } else if (type === 'circular') {
         document.getElementById('circularForm').classList.add('active');
+    } else if (type === 'policy') {
+        document.getElementById('policyForm').classList.add('active');
     }
 }
 
@@ -454,6 +550,33 @@ function generateCircularBody() {
     .then(res => res.text())
     .then(text => {
         document.getElementById('circular_body').value = text;
+    })
+    .catch(err => {
+        alert('Error generating body: ' + err);
+    });
+}
+
+function generatePolicyBody() {
+    const prompt = document.getElementById('policy_body_prompt').value;
+    const lang = document.getElementById('policy_language').value;
+    
+    if (!prompt || !lang) {
+        alert('Please select language and enter prompt first!');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('body_prompt', prompt);
+    formData.append('language', lang);
+    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+    
+    fetch('{% url "generate_policy_body" %}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.text())
+    .then(text => {
+        document.getElementById('policy_body').value = text;
     })
     .catch(err => {
         alert('Error generating body: ' + err);

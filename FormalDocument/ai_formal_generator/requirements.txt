@@ -3,4 +3,7 @@ google-generativeai
 python-dotenv
 reportlab
 python-docx
-reportlab
+weasyprint
+PyPDF2
+pdf2image
+Pillow

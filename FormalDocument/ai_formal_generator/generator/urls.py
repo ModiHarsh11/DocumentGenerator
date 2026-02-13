@@ -16,4 +16,10 @@ urlpatterns = [
     path("circular/result/", views.result_circular, name="result_circular"),
     path("circular/pdf/", views.download_circular_pdf, name="download_circular_pdf"),
     path("circular/docx/", views.download_circular_docx, name="download_circular_docx"),
+
+    # POLICY
+    path("policy/generate-body/", views.generate_policy_body, name="generate_policy_body"),
+    path("policy/result/", views.result_policy, name="result_policy"),
+    path("policy/pdf/", views.download_policy_pdf, name="download_policy_pdf"),
+    path("policy/docx/", views.download_policy_docx, name="download_policy_docx"),
 ]

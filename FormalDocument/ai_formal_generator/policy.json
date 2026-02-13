@@ -1,0 +1,22 @@
+{
+  "document_type": "Policy",
+  "title_en": "Policy",
+  "title_hi": "नीति",
+
+  "header": {
+    "en": [
+      "Bhaskaracharya National Institute for Space Applications & Geo-Informatics (BISAG-N)",
+      "Ministry of Electronics and Information Technology (MeitY)",
+      "Government of India"
+    ],
+    "hi": [
+      "भास्करचार्य राष्ट्रीय अंतरिक्ष अनुप्रयोग एवं भू-सूचना विज्ञान संस्थान",
+      "इलेक्ट्रॉनिक्स और सूचना प्रौद्योगिकी मंत्रालय",
+      "भारत सरकार"
+    ]
+  },
+
+  
+  "show_from": true,
+  "show_to": true
+}

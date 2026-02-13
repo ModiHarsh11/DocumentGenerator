@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Policy Preview - BISAG-N</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f5f5f5; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .policy-preview {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 50px 60px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            font-family: 'Times New Roman', serif;
+        }
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header-line {
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .policy-title {
+            font-weight: bold;
+            text-decoration: underline;
+            font-size: 18px;
+            margin: 25px 0 20px;
+            text-align: center;
+        }
+        .date-section {
+            text-align: right;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .subject-section {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .body-section {
+            text-align: justify;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+        .from-section {
+            text-align: right;
+            font-weight: bold;
+            margin: 40px 0 30px;
+        }
+        .to-section {
+            font-weight: bold;
+            margin: 30px 0 20px;
+        }
+        .to-section ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        .to-section li {
+            margin-bottom: 8px;
+        }
+        .attached-section {
+            font-weight: normal;
+            margin: 30px 0;
+        }
+        .action-buttons {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px dashed #dee2e6;
+        }
+        .btn {
+            margin: 0 5px;
+            border-radius: 4px;
+        }
+        .btn-danger {
+            background: #dc3545;
+            border: none;
+        }
+        .btn-success {
+            background: #28a745;
+            border: none;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            border: none;
+        }
+        @media print {
+            .action-buttons { display: none; }
+            body { background: white; }
+            .policy-preview { box-shadow: none; padding: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="policy-preview">
+    
+    <!-- BISAG Logo -->
+    <div class="header-section">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="{% static 'generator/bisag_logo.png' %}" alt="BISAG Logo" style="height: 100px; width: 100px;">
+        </div>
+        
+        <!-- Header Lines -->
+        <div class="header-line">{{ header.org_name }}</div>
+        <div class="header-line">{{ header.ministry }}</div>
+        <div class="header-line">{{ header.government }}</div>
+    </div>
+    
+    <!-- Policy Title -->
+    <div class="policy-title">
+        {% if language == "hi" %}नीति{% else %}Policy{% endif %}
+    </div>
+    
+    <!-- Date -->
+    <div class="date-section">
+        {% if language == "hi" %}दिनांक :{% else %}Date :{% endif %} {{ date }}
+    </div>
+    
+    <!-- Subject -->
+    <div class="subject-section">
+        {% if language == "hi" %}विषय :{% else %}Subject :{% endif %} {{ subject }}
+    </div>
+    
+    <!-- Body -->
+    <div class="body-section">
+        {{ body|linebreaks }}
+    </div>
+    
+    <!-- From Section -->
+    <div class="from-section">
+        {{ from }}
+    </div>
+    
+    <!-- To Section (Bullet Points) -->
+    <div class="to-section">
+        {% if language == "hi" %}प्रति :{% else %}To :{% endif %}
+        <ul>
+            {% for designation in to_designations %}
+            <li>{{ designation }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <!-- Attached Section -->
+    <div class="attached-section">
+        {% if language == "hi" %}संलग्न :{% else %}Attached :{% endif %} {{ attached_pdf_name }}
+    </div>
+    
+</div>
+
+{% if pdf_base64 %}
+<!-- Second Page - Uploaded PDF Preview -->
+<div style="max-width: 900px; margin: 30px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+    <h5 class="text-center mb-4" style="color: #2c3e50; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+        📎 Attached Policy Document (Additional Pages)
+    </h5>
+    <div style="border: 2px solid #dee2e6; border-radius: 8px; overflow: hidden;">
+        <iframe 
+            src="data:application/pdf;base64,{{ pdf_base64 }}" 
+            type="application/pdf" 
+            width="100%" 
+            height="800px" 
+            style="border: none; display: block;">
+            <p>Your browser does not support PDFs. 
+               <a href="data:application/pdf;base64,{{ pdf_base64 }}" download="attached_policy.pdf">Download the PDF</a> instead.
+            </p>
+        </iframe>
+    </div>
+    <p class="text-center mt-3 text-muted" style="font-size: 14px;">
+        <i class="bi bi-info-circle"></i> This PDF will be merged as pages 2+ when you download the complete policy document.
+    </p>
+</div>
+{% endif %}
+
+<!-- Action Buttons -->
+<div class="action-buttons">
+    <a href="{% url 'download_policy_pdf' %}" class="btn btn-danger btn-lg">
+        📄 Download PDF
+    </a>
+    <a href="{% url 'download_policy_docx' %}" class="btn btn-success btn-lg">
+        📝 Download DOCX
+    </a>
+    <a href="{% url 'home' %}" class="btn btn-secondary btn-lg">
+        ← Back to Home
+    </a>
+</div>
+
+</body>
+</html>

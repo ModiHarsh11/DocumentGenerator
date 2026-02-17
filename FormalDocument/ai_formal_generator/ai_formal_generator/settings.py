@@ -132,3 +132,4 @@ STATICFILES_DIRS = [
 # DEFAULT PRIMARY KEY
 # --------------------------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

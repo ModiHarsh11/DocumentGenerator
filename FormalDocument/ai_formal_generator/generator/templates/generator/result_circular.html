@@ -92,10 +92,107 @@
             background: #6c757d;
             border: none;
         }
+        .regenerate-section {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 30px;
+        }
+        .regenerate-section h5 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        .regenerate-section p {
+            color: #6c757d;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .regenerate-section .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+        .regenerate-section .form-control:focus {
+            border-color: #2c3e50;
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.15);
+        }
+        .regenerate-section .form-label {
+            color: #495057;
+            font-weight: 600;
+        }
+        .btn-regenerate {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            font-weight: 600;
+            border-radius: 4px;
+        }
+        .btn-regenerate:hover {
+            background: #1a252f;
+            color: white;
+        }
+        .btn-edit-details {
+            background: white;
+            color: #2c3e50;
+            border: 2px solid #2c3e50;
+            padding: 8px 20px;
+            font-weight: 600;
+            border-radius: 4px;
+        }
+        .btn-edit-details:hover {
+            background: #2c3e50;
+            color: white;
+            border-color: #2c3e50;
+        }
+        .version-toggle {
+            text-align: center;
+            margin: 15px 0;
+            padding: 20px;
+        }
+        .btn-toggle {
+            margin: 0 8px;
+            padding: 10px 25px;
+            background: white;
+            color: #2c3e50;
+            border: 2px solid #dee2e6;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .btn-toggle:hover {
+            border-color: #2c3e50;
+            background: #f8f9fa;
+        }
+        .btn-toggle.active {
+            background: #2c3e50;
+            color: white;
+            border-color: #2c3e50;
+        }
+        .hidden {
+            display: none;
+        }
         @media print {
             .action-buttons { display: none; }
+            .regenerate-section { display: none; }
+            .version-toggle { display: none; }
             body { background: white; }
             .circular-preview { box-shadow: none; padding: 30px; }
+        }
+        @media (max-width: 768px) {
+            .regenerate-section .d-flex {
+                flex-direction: column !important;
+            }
+            .btn-edit-details {
+                margin-left: 0 !important;
+                margin-top: 10px;
+                width: 100%;
+            }
+            .btn-toggle {
+                margin: 5px;
+                padding: 8px 15px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -131,8 +228,9 @@
     </div>
     
     <!-- Body -->
-    <div class="body-section">
-        {{ body|linebreaks }}
+    <div class="body-section" id="bodyDisplay">
+        <div id="originalBody">{{ body|linebreaks }}</div>
+        <div id="regeneratedBody" class="hidden"></div>
     </div>
     
     <!-- From Section -->
@@ -168,6 +266,39 @@
     
 </div>
 
+<!-- Version Toggle (Hidden initially, shown after regeneration) -->
+<div id="versionToggle" class="version-toggle hidden">
+    <strong style="font-size: 16px; color: #2c3e50;">📋 Select Version / संस्करण चुनें:</strong><br><br>
+    <button class="btn btn-toggle active" onclick="switchVersion('original')">
+        ✓ Original / मूल
+    </button>
+    <button class="btn btn-toggle" onclick="switchVersion('regenerated')">
+        ✨ Regenerated / पुनर्जनित
+    </button>
+</div>
+
+<!-- Regenerate Section -->
+<div class="regenerate-section">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">🔄 Regenerate Body / मुख्य भाग पुनर्जनित करें</h5>
+        <button class="btn btn-edit-details" data-url="{% url 'home' %}" onclick="window.location.href=this.dataset.url">
+            ✏️ Edit Details / विवरण संपादित करें
+        </button>
+    </div>
+    <p style="font-size: 14px;">
+        Enter a new prompt to refine and improve the body content. / नया संकेत दर्ज करें और मुख्य भाग को परिष्कृत करें।
+    </p>
+    <div class="mb-3">
+        <label class="form-label">Regeneration Prompt / पुनर्जनन संकेत</label>
+        <textarea id="regeneratePrompt" class="form-control" rows="3" 
+                  placeholder="Example: Make it more formal, add technical details / उदाहरण: इसे और औपचारिक बनाएं, तकनीकी विवरण जोड़ें"></textarea>
+    </div>
+    <button class="btn btn-regenerate" onclick="regenerateBody()">
+        🤖 Regenerate / पुनर्जनित करें
+    </button>
+    <span id="regenerateStatus" style="margin-left: 15px; font-weight: bold;"></span>
+</div>
+
 <!-- Action Buttons -->
 <div class="action-buttons">
     <a href="{% url 'download_circular_pdf' %}" class="btn btn-danger btn-lg">
@@ -180,6 +311,98 @@
         ← Back to Home
     </a>
 </div>
+
+<script>
+let currentVersion = 'original';
+let originalBody = `{{ body|escapejs }}`;
+let regeneratedBody = '';
+let previousPrompt = `{{ body_prompt|escapejs }}`;
+
+function switchVersion(version) {
+    currentVersion = version;
+    const originalDiv = document.getElementById('originalBody');
+    const regeneratedDiv = document.getElementById('regeneratedBody');
+    const toggleButtons = document.querySelectorAll('.btn-toggle');
+    
+    if (version === 'original') {
+        originalDiv.classList.remove('hidden');
+        regeneratedDiv.classList.add('hidden');
+        toggleButtons[0].classList.add('active');
+        toggleButtons[1].classList.remove('active');
+        updateSessionBody(originalBody);
+    } else {
+        originalDiv.classList.add('hidden');
+        regeneratedDiv.classList.remove('hidden');
+        toggleButtons[0].classList.remove('active');
+        toggleButtons[1].classList.add('active');
+        updateSessionBody(regeneratedBody);
+    }
+}
+
+function updateSessionBody(bodyContent) {
+    // Update the session data with currently selected body
+    const formData = new FormData();
+    formData.append('body', bodyContent);
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    
+    fetch('{% url "update_circular_body" %}', {
+        method: 'POST',
+        body: formData
+    });
+}
+
+function regenerateBody() {
+    const prompt = document.getElementById('regeneratePrompt').value.trim();
+    const lang = '{{ language }}';
+    const status = document.getElementById('regenerateStatus');
+    
+    if (!prompt) {
+        alert('Please enter a regeneration prompt! / कृपया पुनर्जनन संकेत दर्ज करें!');
+        return;
+    }
+    
+    status.textContent = '⏳ Regenerating... / पुनर्जनित कर रहे हैं...';
+    status.style.color = '#ffc107';
+    
+    const formData = new FormData();
+    formData.append('regenerate_prompt', prompt);
+    formData.append('previous_prompt', previousPrompt);
+    formData.append('previous_body', originalBody);
+    formData.append('language', lang);
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    
+    fetch('{% url "regenerate_circular_body" %}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.text())
+    .then(text => {
+        regeneratedBody = text;
+        
+        // Update regenerated body div
+        const regeneratedDiv = document.getElementById('regeneratedBody');
+        regeneratedDiv.innerHTML = text.replace(/\n/g, '<br>');
+        
+        // Show version toggle
+        document.getElementById('versionToggle').classList.remove('hidden');
+        
+        // Switch to regenerated version
+        switchVersion('regenerated');
+        
+        status.textContent = '✓ Successfully Regenerated! / सफलतापूर्वक पुनर्जनित!';
+        status.style.color = '#28a745';
+        
+        setTimeout(() => {
+            status.textContent = '';
+        }, 3000);
+    })
+    .catch(err => {
+        status.textContent = '✗ Error! / त्रुटि!';
+        status.style.color = '#dc3545';
+        alert('Regeneration error / पुनर्जनन त्रुटि: ' + err);
+    });
+}
+</script>
 
 </body>
 </html>

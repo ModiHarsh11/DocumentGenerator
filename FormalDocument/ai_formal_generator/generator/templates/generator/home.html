@@ -199,7 +199,7 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="doc-type-btn" onclick="selectDocType('circular')">
+                <div class="doc-type-btn" onclick="selectDocType()">
                     <div class="icon">🛒</div>
                     <div class="title">Purchase Order</div>
                 </div>
@@ -231,6 +231,22 @@
                     <input type="text" name="reference" id="office_reference" class="form-control" value="BISAG-N/Office Order/2026/" required>
                 </div>
             </div>
+            
+
+            <!-- <div class="collapsible-section mb-3">
+                <div class="collapsible-header" onclick="toggleCollapse('office_from_content')">
+                    <span>From (Recipients) / से (पद)</span>
+                    <span class="arrow">▶</span>
+                </div>
+                <div id="office_from_content" class="collapsible-content">
+                    {% for designation in designations %}
+                    <div class="form-check mb-2">
+                        <input type="radio" name="from_recipients[]" value="{{ designation }}" class="form-check-input">
+                        <label class="form-check-label">{{ designation }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div> -->
 
             <!-- From Section - Collapsible -->
             <div class="collapsible-section mb-3">
@@ -257,8 +273,8 @@
                 <div id="office_to_content" class="collapsible-content">
                     {% for designation in designations %}
                     <div class="form-check mb-2">
-                        <input type="checkbox" name="to_recipients[]" value="{{ designation }}" class="form-check-input">
-                        <label class="form-check-label">{{ designation }}</label>
+                        <input type="checkbox" name="to_recipients[]" value="{{ designation }}" class="form-check-input" id="office_to_{{ forloop.counter }}">
+                        <label class="form-check-label" for="office_to_{{ forloop.counter }}">{{ designation }}</label>
                     </div>
                     {% endfor %}
                 </div>
@@ -333,8 +349,8 @@
                 <div id="circular_to_content" class="collapsible-content">
                     {% for p in people %}
                     <div class="form-check mb-2">
-                        <input type="checkbox" name="to[]" value="{{ p.id }}" class="form-check-input">
-                        <label class="form-check-label">
+                        <input type="checkbox" name="to[]" value="{{ p.id }}" class="form-check-input" id="circular_to_{{ p.id }}">
+                        <label class="form-check-label" for="circular_to_{{ p.id }}">
                             <strong>{{ p.name_en }}</strong> ({{ p.designation_en }})
                         </label>
                     </div>
@@ -416,8 +432,8 @@
                 <div id="policy_to_content" class="collapsible-content">
                     {% for designation in designations %}
                     <div class="form-check mb-2">
-                        <input type="checkbox" name="to_recipients[]" value="{{ designation }}" class="form-check-input">
-                        <label class="form-check-label">{{ designation }}</label>
+                        <input type="checkbox" name="to_recipients[]" value="{{ designation }}" class="form-check-input" id="policy_to_{{ forloop.counter }}">
+                        <label class="form-check-label" for="policy_to_{{ forloop.counter }}">{{ designation }}</label>
                     </div>
                     {% endfor %}
                 </div>
@@ -484,6 +500,21 @@ function toggleCollapse(contentId) {
     // Toggle expanded class
     header.classList.toggle('expanded');
     content.classList.toggle('expanded');
+    
+    // If opening a "from" section, auto-open the select dropdown
+    if (header.classList.contains('expanded') && content.querySelector('select')) {
+        setTimeout(() => {
+            const select = content.querySelector('select');
+            if (select && select.showPicker) {
+                select.showPicker();
+            } else if (select) {
+                // Fallback for older browsers
+                select.focus();
+                const event = new MouseEvent('mousedown', { bubbles: true });
+                select.dispatchEvent(event);
+            }
+        }, 320);
+    }
 }
 
 function selectDocType(type) {

@@ -103,6 +103,61 @@ Today's Date: {today}
     return HttpResponse(res.text.strip())
 
 
+def regenerate_office_body(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request"}, status=400)
+
+    regenerate_prompt = request.POST.get("regenerate_prompt", "").strip()
+    previous_prompt = request.POST.get("previous_prompt", "").strip()
+    previous_body = request.POST.get("previous_body", "").strip()
+    lang = request.POST.get("language", "en")
+
+    # Get current date
+    today = date.today().strftime("%d-%m-%Y")
+
+    if lang == "hi":
+        system_prompt = f"""
+आप BISAG-N के लिए एक आधिकारिक कार्यालय आदेश की मुख्य सामग्री को परिष्कृत और अनुकूलित कर रहे हैं।
+
+दिए गए इनपुट:
+1. नया सुधार संकेत: {regenerate_prompt}
+2. पिछला संकेत: {previous_prompt}
+3. पिछला उत्पन्न मुख्य भाग: {previous_body}
+
+नियम:
+- इन तीनों इनपुट के आधार पर एक बेहतर, परिष्कृत और अनुकूलित संस्करण बनाएं।
+- पिछले संस्करण की तुलना में बेहतर और अधिक औपचारिक होना चाहिए।
+- सरकारी भाषा का प्रयोग करें।
+- कोई शीर्षक, संदर्भ, दिनांक, प्रेषक या प्राप्तकर्ता न लिखें।
+- केवल सादा पाठ में उत्तर दें।
+- कम से कम 2–3 वाक्यों का एक औपचारिक अनुच्छेद लिखें।
+
+Today's Date: {today}
+"""
+    else:
+        system_prompt = f"""
+You are refining and optimizing the BODY of an official government Office Order for BISAG-N.
+
+Given inputs:
+1. New refinement prompt: {regenerate_prompt}
+2. Previous prompt: {previous_prompt}
+3. Previous generated body: {previous_body}
+
+Rules:
+- Create an improved, refined, and optimized version based on all three inputs.
+- Must be better and more formal than the previous version.
+- Use official government tone.
+- Do not include title, reference, date, From or To.
+- Plain text only.
+- Write one formal paragraph (minimum 2–3 sentences).
+
+Today's Date: {today}
+"""
+
+    res = gemini_model.generate_content(system_prompt)
+    return HttpResponse(res.text.strip())
+
+
 def result_office_order(request):
     if request.method != "POST":
         return redirect("home")
@@ -120,6 +175,8 @@ def result_office_order(request):
             else "BISAG-N/Office Order/2026/"
         )
 
+    body_prompt = request.POST.get("body_prompt", "").strip()
+
     data = {
         "language": lang,
         "header": OFFICE_ORDER["header"][lang],
@@ -127,12 +184,23 @@ def result_office_order(request):
         "reference": reference,
         "date": date,
         "body": request.POST.get("body", "").strip(),
+        "body_prompt": body_prompt,
         "from": DESIGNATION_MAP[request.POST.get("from_position")][lang],
         "to": [DESIGNATION_MAP[x][lang] for x in request.POST.getlist("to_recipients[]")],
     }
 
     request.session["doc_data"] = data
     return render(request, "generator/result_office_order.html", data)
+
+# Update session body for office order
+def update_office_body(request):
+    if request.method == "POST":
+        new_body = request.POST.get("body", "")
+        if "doc_data" in request.session:
+            request.session["doc_data"]["body"] = new_body
+            request.session.modified = True
+            return JsonResponse({"status": "success"})
+    return JsonResponse({"status": "error"}, status=400)
 
 # PDF + DOCX for office order → UNCHANGED
 # (your existing download_pdf & download_docx remain exactly same)
@@ -190,6 +258,56 @@ IMPORTANT Rules:
     res = gemini_model.generate_content(system_prompt + "\n\nTopic:\n" + prompt)
     return HttpResponse(res.text.strip())
 
+# -------- REGENERATE CIRCULAR BODY --------
+def regenerate_circular_body(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request"}, status=400)
+
+    regenerate_prompt = request.POST.get("regenerate_prompt", "").strip()
+    previous_prompt = request.POST.get("previous_prompt", "").strip()
+    previous_body = request.POST.get("previous_body", "").strip()
+    lang = request.POST.get("language", "en")
+
+    if lang == "hi":
+        system_prompt = f"""
+आप BISAG-N के लिए एक सरकारी परिपत्र (Circular) के मुख्य भाग को परिष्कृत और अनुकूलित कर रहे हैं।
+
+दिए गए इनपुट:
+1. नया सुधार संकेत: {regenerate_prompt}
+2. पिछला संकेत: {previous_prompt}
+3. पिछला उत्पन्न मुख्य भाग: {previous_body}
+
+महत्वपूर्ण नियम:
+- इन तीनों इनपुट के आधार पर एक बेहतर, परिष्कृत और अनुकूलित संस्करण बनाएं।
+- पिछले संस्करण की तुलना में बेहतर और अधिक औपचारिक होना चाहिए।
+- केवल परिपत्र का मुख्य विषय-वस्तु लिखें।
+- कोई विषय, शीर्षक, संदर्भ, दिनांक, हस्ताक्षर, प्रेषक या प्राप्तकर्ता न लिखें।
+- 1–2 औपचारिक अनुच्छेद लिखें।
+- सरकारी भाषा का प्रयोग करें।
+- केवल सादा पाठ में उत्तर दें।
+"""
+    else:
+        system_prompt = f"""
+You are refining and optimizing the BODY content of an official Government Circular for BISAG-N.
+
+Given inputs:
+1. New refinement prompt: {regenerate_prompt}
+2. Previous prompt: {previous_prompt}
+3. Previous generated body: {previous_body}
+
+IMPORTANT Rules:
+- Create an improved, refined, and optimized version based on all three inputs.
+- Must be better and more formal than the previous version.
+- Write ONLY the main body content of the circular.
+- Do NOT include subject, title, reference, date, signature, From or To sections.
+- Write 1–2 formal paragraphs only.
+- Official government tone.
+- Plain text only.
+"""
+
+    res = gemini_model.generate_content(system_prompt)
+    return HttpResponse(res.text.strip())
+
 # -------- CIRCULAR PREVIEW --------
 def result_circular(request):
     if request.method != "POST":
@@ -200,6 +318,7 @@ def result_circular(request):
     date = format_date_ddmmyyyy(raw_date) if raw_date else timezone.now().strftime("%d-%m-%Y")
     subject = request.POST.get("subject")
     body = request.POST.get("body")
+    body_prompt = request.POST.get("body_prompt", "").strip()
     
     # Get from position from dropdown (like office order)
     from_position = request.POST.get("from_position")
@@ -230,12 +349,23 @@ def result_circular(request):
         "date": date,
         "subject": subject,
         "body": body,
+        "body_prompt": body_prompt,
         "from": from_designation,
         "to_people": to_people,
     }
 
     request.session["circular_data"] = data
     return render(request, "generator/result_circular.html", data)
+
+# Update session body for circular
+def update_circular_body(request):
+    if request.method == "POST":
+        new_body = request.POST.get("body", "")
+        if "circular_data" in request.session:
+            request.session["circular_data"]["body"] = new_body
+            request.session.modified = True
+            return JsonResponse({"status": "success"})
+    return JsonResponse({"status": "error"}, status=400)
 
 # -------- CIRCULAR PDF --------
 def download_circular_pdf(request):
@@ -531,6 +661,56 @@ IMPORTANT Rules:
     res = gemini_model.generate_content(system_prompt + "\n\nTopic:\n" + prompt)
     return HttpResponse(res.text.strip())
 
+# -------- REGENERATE POLICY BODY --------
+def regenerate_policy_body(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request"}, status=400)
+
+    regenerate_prompt = request.POST.get("regenerate_prompt", "").strip()
+    previous_prompt = request.POST.get("previous_prompt", "").strip()
+    previous_body = request.POST.get("previous_body", "").strip()
+    lang = request.POST.get("language", "en")
+
+    if lang == "hi":
+        system_prompt = f"""
+आप BISAG-N के लिए एक सरकारी नीति (Policy) के मुख्य भाग को परिष्कृत और अनुकूलित कर रहे हैं।
+
+दिए गए इनपुट:
+1. नया सुधार संकेत: {regenerate_prompt}
+2. पिछला संकेत: {previous_prompt}
+3. पिछला उत्पन्न मुख्य भाग: {previous_body}
+
+महत्वपूर्ण नियम:
+- इन तीनों इनपुट के आधार पर एक बेहतर, परिष्कृत और अनुकूलित संस्करण बनाएं।
+- पिछले संस्करण की तुलना में बेहतर और अधिक औपचारिक होना चाहिए।
+- केवल नीति का मुख्य विषय-वस्तु लिखें।
+- कोई विषय, शीर्षक, संदर्भ, दिनांक, हस्ताक्षर, प्रेषक या प्राप्तकर्ता न लिखें।
+- 1–2 औपचारिक अनुच्छेद लिखें।
+- सरकारी भाषा का प्रयोग करें।
+- केवल सादा पाठ में उत्तर दें।
+"""
+    else:
+        system_prompt = f"""
+You are refining and optimizing the BODY content of an official Government Policy for BISAG-N.
+
+Given inputs:
+1. New refinement prompt: {regenerate_prompt}
+2. Previous prompt: {previous_prompt}
+3. Previous generated body: {previous_body}
+
+IMPORTANT Rules:
+- Create an improved, refined, and optimized version based on all three inputs.
+- Must be better and more formal than the previous version.
+- Write ONLY the main body content of the policy.
+- Do NOT include subject, title, reference, date, signature, From or To sections.
+- Write 1–2 formal paragraphs only.
+- Official government tone.
+- Plain text only.
+"""
+
+    res = gemini_model.generate_content(system_prompt)
+    return HttpResponse(res.text.strip())
+
 # -------- POLICY PREVIEW --------
 def result_policy(request):
     if request.method != "POST":
@@ -541,6 +721,7 @@ def result_policy(request):
     date = format_date_ddmmyyyy(raw_date) if raw_date else timezone.now().strftime("%d-%m-%Y")
     subject = request.POST.get("subject")
     body = request.POST.get("body")
+    body_prompt = request.POST.get("body_prompt", "").strip()
     attached_pdf_name = request.POST.get("attached_pdf_name", "")
     
     # Get from position from dropdown
@@ -589,6 +770,7 @@ def result_policy(request):
         "date": date,
         "subject": subject,
         "body": body,
+        "body_prompt": body_prompt,
         "from": from_designation,
         "to_designations": to_designations,
         "attached_pdf_name": attached_pdf_name,
@@ -603,6 +785,16 @@ def result_policy(request):
         data["pdf_base64"] = pdf_base64
     
     return render(request, "generator/result_policy.html", data)
+
+# Update session body for policy
+def update_policy_body(request):
+    if request.method == "POST":
+        new_body = request.POST.get("body", "")
+        if "policy_data" in request.session:
+            request.session["policy_data"]["body"] = new_body
+            request.session.modified = True
+            return JsonResponse({"status": "success"})
+    return JsonResponse({"status": "error"}, status=400)
 
 # -------- POLICY PDF --------
 def download_policy_pdf(request):
